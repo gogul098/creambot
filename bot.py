@@ -55,36 +55,25 @@ def send_telegram_message(message_text):
         print(f"Failed to push message. Network fault: {e}")
 
 def main():
-    print("Sentinel online. Monitoring the objective...")
-    # HOW: We immediately test the pipeline on boot to verify credentials are correct.
-    send_telegram_message("🤖 Sentinel Booted. Monitoring initialized.")
-    
-    while True:
-        html = fetch_page()
-        if html:
-            in_stock = check_stock(html)
-            
-            if in_stock is True:
-                alert = f"🚨 RESTOCK ALERT! Get on it now: {URL}"
-                print(alert)
-                send_telegram_message(alert)
-                break # Mission accomplished. Exit loop.
-                
-            elif in_stock is False:
-                status = f"⏱️ [{time.strftime('%Y-%m-%d %H:%M:%S')}] Status: Still sold out. Holding the line."
-                print(status)
-                send_telegram_message(status) # The heartbeat ping
-                
-            elif in_stock is None:
-                error_msg = "⚠️ WARNING: DOM parsing failed. Site architecture may have changed."
-                print(error_msg)
-                send_telegram_message(error_msg)
-        else:
-            send_telegram_message("⚠️ WARNING: Failed to fetch the target URL. Check network or server status.")
-        
-        # NOTE: If you run this at 3600 seconds, your phone will ping once an hour. 
-        # If you drop this to 60 seconds, you will spam yourself to death. Leave it at 3600.
-        time.sleep(3600) 
+    print("Checking stock...")
 
+    html = fetch_page()
+
+    if html:
+        in_stock = check_stock(html)
+
+        if in_stock:
+            alert = f"🚨 RESTOCK ALERT! {URL}"
+            print(alert)
+            send_telegram_message(alert)
+
+        elif in_stock is False:
+            print("Still sold out.")
+
+        else:
+            send_telegram_message("⚠️ DOM structure changed.")
+
+    else:
+        send_telegram_message("⚠️ Failed to fetch website.")
 if __name__ == "__main__":
     main()
