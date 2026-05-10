@@ -15,7 +15,7 @@ TELEGRAM_CHAT_ID = os.getenv("CHAT_ID")
 STATE_FILE = "state.json"
 
 # Send sold-out reminder only every 5 hours
-REMINDER_INTERVAL = 5 * 60 * 60
+REMINDER_INTERVAL = 60
 
 
 def load_state():
